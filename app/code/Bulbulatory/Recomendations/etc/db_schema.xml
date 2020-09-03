@@ -1,0 +1,20 @@
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="recommendations_table" engine="innodb" comment="Customer Recommendations Table">
+        <column xsi:type="int" name="recommendation_id" padding="11" unsigned="false" nullable="false" identity="true" comment="Recommendation ID"/>
+        <column xsi:type="int" name="customer_id" padding="11" unsigned="false" nullable="false" identity="false" comment="Recommender ID" />
+        <column xsi:type="varchar" name="email" length="100" nullable="false" comment="Email to which the recommendation was sent" /> 
+        <column xsi:type="varchar" name="hash" length="255" nullable="false" comment="Recommendation hash" />
+        <column xsi:type="boolean" name="status" nullable="false" default="false" comment="Recommendation status" />
+        <column xsi:type="datetime" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Date of recommendation creation" />
+        <column xsi:type="datetime" name="confirmed_at" on_update="false" nullable="true" comment="Date of recommendation confirmation" />
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="recommendation_id" />
+        </constraint>
+        <constraint xsi:type="unique" referenceId="RECOMMENDATIONS_TABLE_UNIQUE_HASH">
+            <column name="hash" />
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="RECOMMENDATIONS_TABLE_CUSTOMER_ID" table="recommendations_table"
+            column="customer_id" referenceTable="customer_entity" referenceColumn="entity_id" onDelete="CASCADE"/>
+    </table>
+</schema>
