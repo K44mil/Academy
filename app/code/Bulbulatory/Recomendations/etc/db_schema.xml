@@ -2,7 +2,7 @@
                  xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
     <table name="recommendations_table" engine="innodb" comment="Customer Recommendations Table">
         <column xsi:type="int" name="recommendation_id" padding="11" unsigned="false" nullable="false" identity="true" comment="Recommendation ID"/>
-        <column xsi:type="int" name="customer_id" padding="11" unsigned="false" nullable="false" identity="false" comment="Recommender ID" />
+        <column xsi:type="int" name="customer_id" padding="10" unsigned="true" nullable="false" identity="false" comment="Recommender ID" />
         <column xsi:type="varchar" name="email" length="100" nullable="false" comment="Email to which the recommendation was sent" /> 
         <column xsi:type="varchar" name="hash" length="255" nullable="false" comment="Recommendation hash" />
         <column xsi:type="boolean" name="status" nullable="false" default="false" comment="Recommendation status" />
