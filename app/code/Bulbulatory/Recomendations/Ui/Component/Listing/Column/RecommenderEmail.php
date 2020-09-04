@@ -5,6 +5,7 @@ use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
 use \Magento\Customer\Api\CustomerRepositoryInterface;
+use \Magento\Framework\Exception\NoSuchEntityException;
 
 class RecommenderEmail extends Column
 {
@@ -21,19 +22,23 @@ class RecommenderEmail extends Column
         $this->customerRepositoryInterface = $customerRepositoryInterface;
     }
 
-public function prepareDataSource(array $dataSource)
-{
-    if (isset($dataSource['data']['items'])) {
-        foreach ($dataSource['data']['items'] as &$items) {
-            if ($items['customer_id']) {
-                $customerId = $items['customer_id'];
-                $customer = $this->customerRepositoryInterface->getById($customerId);
-                $items['customer_id'] = $customer->getEmail();
-            } else {
-                $items['customer_id'] = '';
+    public function prepareDataSource(array $dataSource)
+    {
+        if (isset($dataSource['data']['items'])) {
+            foreach ($dataSource['data']['items'] as &$item) {
+                if ($item['customer_id']) {
+                    $customerId = $item['customer_id'];
+                    try {
+                        $customer = $this->customerRepositoryInterface->getById($customerId);
+                        $item['customer_email'] = $customer->getEmail();
+                    } catch (NoSuchEntityException $e) {
+                        $item['customer_email'] = '';
+                    }           
+                } else {
+                    $item['customer_email'] = '';
+                }
             }
         }
+        return $dataSource;
     }
-    return $dataSource;
-}
 }

@@ -13,7 +13,7 @@
             spinner_columns
         </item>
     </argument>
-    <dataSource name="nameOfDataSource">
+    <dataSource name="bulbulatory_recomendations_recommendations_listing_data_source">
         <argument name="dataProvider" xsi:type="configurableObject">
             <argument name="class" xsi:type="string">Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider</argument>
             <argument name="name" xsi:type="string">bulbulatory_recomendations_recommendations_listing_data_source</argument>
@@ -24,7 +24,7 @@
                     <item name="component" xsi:type="string">Magento_Ui/js/grid/provider</item>
                     <item name="update_url" xsi:type="url" path="mui/index/render" />
                     <item name="storageConfig" xsi:type="array">
-                        <item name="indexField" xsi:type="string">id</item>
+                        <item name="indexField" xsi:type="string">recommendation_id</item>
                     </item>
                 </item>
             </argument>
@@ -52,7 +52,7 @@
                 </item>
             </argument>
         </column> -->
-        <column name="customer_id" class="Bulbulatory\Recomendations\Ui\Component\Listing\Column\RecommenderEmail">
+        <column name="customer_email" class="Bulbulatory\Recomendations\Ui\Component\Listing\Column\RecommenderEmail">
             <!-- <argument name="data" xsi:type="array">
                 <item name="options" xsi:type="object">Bulbulatory\Recomendations\Model\Source\IdToEmailConverter</item>
                 <item name="config" xsi:type="array">

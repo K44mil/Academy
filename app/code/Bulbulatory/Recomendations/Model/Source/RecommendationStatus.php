@@ -6,8 +6,8 @@ class RecommendationStatus implements \Magento\Framework\Option\ArrayInterface
     public function toOptionArray()
     {
         return [
-            ['value' => 0, 'label' => __('Nie potwierdzony')],
-            ['value' => 1, 'label' => __('Potwierdzony')]
+            ['value' => 0, 'label' => __('Unconfirmed')],
+            ['value' => 1, 'label' => __('Confirmed')]
         ];
     }
 }

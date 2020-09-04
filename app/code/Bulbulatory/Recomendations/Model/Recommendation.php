@@ -9,7 +9,7 @@ class Recommendation extends \Magento\Framework\Model\AbstractModel implements \
 
     protected function _construct()
     {
-        $this->_init('Bulbulatory\Recomendations\Model\ResourceModel\Recommendation');
+        $this->_init(Bulbulatory\Recomendations\Model\ResourceModel\Recommendation::class);
     }
 
     public function getIdentities()
@@ -19,7 +19,6 @@ class Recommendation extends \Magento\Framework\Model\AbstractModel implements \
 
     public function getDefaultValues() 
     {
-        $values = [];
-        return $values;
+        return [];
     }
 }
