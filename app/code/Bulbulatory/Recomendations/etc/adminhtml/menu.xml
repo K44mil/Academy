@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Bulbulatory_Recomendations::bulbulatory" title="Bulbulatory" 
+            module="Bulbulatory_Recomendations" sortOrder="10" resource="Bulbulatory_Recomendations::bulbulatory"/>
+        <add id="Bulbulatory_Recomendations::recommendations" title="Recommendations"
+            module="Bulbulatory_Recomendations" sortOrder="1" resource="Bulbulatory_Recomendations::recommendations"
+            parent="Bulbulatory_Recomendations::bulbulatory" action="bulbulatory_recomendations/recommendations"/>
+    </menu>
+</config>
