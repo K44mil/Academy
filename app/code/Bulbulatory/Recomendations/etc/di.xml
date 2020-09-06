@@ -9,8 +9,10 @@
             </argument>
         </arguments>
     </type>
+    <!-- <virtualType name="Bulbulatory\Recomendations\Model\ResourceModel\Recommendation\Collection"
+        type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult"> -->
     <virtualType name="Bulbulatory\Recomendations\Model\ResourceModel\Recommendation\Collection"
-        type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        type="Bulbulatory\Recomendations\Ui\Component\Listing\RecommendationsTableDataProvider">
         <arguments>
             <argument name="mainTable" xsi:type="string">
                 recommendations_table
