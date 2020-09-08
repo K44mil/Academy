@@ -20,4 +20,9 @@ class Index extends \Magento\Backend\App\Action
         $resultPage->getConfig()->getTitle()->prepend((__('Recommendations')));
         return $resultPage;
     }
+
+    protected function _isAllowed()
+    {
+        return $this->_authorization->isAllowed('Bulbulatory_Recomendations::recommendations');
+    }
 }
