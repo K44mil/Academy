@@ -11,7 +11,7 @@ class Collection extends AbstractCollection
 
     protected function _construct()
     {
-        $this->_init(Bulbulatory\Recomendations\Model\Recommendation::class,
-            Bulbulatory\Recomendations\Model\ResourceModel\Recommendation::class);
+        $this->_init(\Bulbulatory\Recomendations\Model\Recommendation::class,
+            \Bulbulatory\Recomendations\Model\ResourceModel\Recommendation::class);
     }
 }
