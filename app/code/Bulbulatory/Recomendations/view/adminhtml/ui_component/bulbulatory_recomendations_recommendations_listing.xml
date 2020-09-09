@@ -130,5 +130,13 @@
                 </item>
             </argument>
         </column>
+        <actionsColumn name="actions" class="Bulbulatory\Recomendations\Ui\Component\Listing\Column\Actions">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="indexField" xsi:type="string">recommendation_id</item>
+                    <item name="label" xsi:type="string">Actions</item>
+                </item>
+            </argument>
+        </actionsColumn>
     </columns>
 </listing>
