@@ -6,26 +6,24 @@ use Magento\Ui\Component\MassAction\Filter;
 use Bulbulatory\Recomendations\Model\ResourceModel\Recommendation\CollectionFactory;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\App\ResponseInterface;
-use Bulbulatory\Recomendations\Model\Recommendation;
-use Bulbulatory\Recomendations\Model\RecommendationRepository;
 use Bulbulatory\Recomendations\Api\RecommendationRepositoryInterface;
-use Bulbulatory\Recomendations\Api\Data\RecommendationInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 
 class MassDelete extends \Magento\Backend\App\Action
 {
     protected $filter;
     protected $collectionFactory;
-    private $_recommendationRepositoryInterface;
+    private $_recommendationRepository;
 
     public function __construct(
         Context $context,
         Filter $filter,
         CollectionFactory $collectionFactory,
-        RecommendationRepositoryInterface $recommendationRepositoryInterface
+        RecommendationRepositoryInterface $recommendationRepository
     ) {
         $this->filter = $filter;
         $this->collectionFactory = $collectionFactory;
-        $this->_recommendationRepositoryInterface = $recommendationRepositoryInterface;
+        $this->_recommendationRepository = $recommendationRepository;
         parent::__construct($context);
     }
 
@@ -37,11 +35,14 @@ class MassDelete extends \Magento\Backend\App\Action
         foreach ($collection as $item) {
             try {
                 $id = $item['recommendation_id'];
-                $recommendation = $this->_recommendationRepositoryInterface->getById($id);
-                $this->_recommendationRepositoryInterface->delete($recommendation);
+                $recommendation = $this->_recommendationRepository->getById($id);
+                $this->_recommendationRepository->delete($recommendation);
+            } catch (NoSuchEntityException $e) {
+                $id = $item['recommendation_id'];
+                $this->messageManager->addErrorMessage(__('Recommendation with ID "%1" does not exist.', $id));
             } catch (Exception $e) {
                 $id = $item['recommendation_id'];
-                $this->messageManager->addErrorMessage(__('Cannot delete recommendation with id: %1', $id));
+                $this->messageManager->addErrorMessage(__('Cannot delete recommendation with ID "%1"', $id));
             }
         }
 
