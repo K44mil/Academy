@@ -22,4 +22,7 @@
             </argument>
         </arguments>
     </virtualType>
+    <preference for="Bulbulatory\Recomendations\Api\RecommendationRepositoryInterface" type="Bulbulatory\Recomendations\Model\RecommendationRepository"/>
+    <preference for="Bulbulatory\Recomendations\Api\Data\RecommendationInterface" type="Bulbulatory\Recomendations\Model\Recommendation"/>
+    <preference for="Bulbulatory\Recomendations\Api\Data\RecommendationSearchResultInterface" type="Bulbulatory\Recomendations\Model\RecommendationSearchResult"/>
 </config>

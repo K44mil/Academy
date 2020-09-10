@@ -7,19 +7,25 @@ use Bulbulatory\Recomendations\Model\ResourceModel\Recommendation\CollectionFact
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\App\ResponseInterface;
 use Bulbulatory\Recomendations\Model\Recommendation;
+use Bulbulatory\Recomendations\Model\RecommendationRepository;
+use Bulbulatory\Recomendations\Api\RecommendationRepositoryInterface;
+use Bulbulatory\Recomendations\Api\Data\RecommendationInterface;
 
 class MassDelete extends \Magento\Backend\App\Action
 {
     protected $filter;
     protected $collectionFactory;
+    private $_recommendationRepositoryInterface;
 
     public function __construct(
         Context $context,
         Filter $filter,
-        CollectionFactory $collectionFactory
+        CollectionFactory $collectionFactory,
+        RecommendationRepositoryInterface $recommendationRepositoryInterface
     ) {
         $this->filter = $filter;
         $this->collectionFactory = $collectionFactory;
+        $this->_recommendationRepositoryInterface = $recommendationRepositoryInterface;
         parent::__construct($context);
     }
 
@@ -27,19 +33,19 @@ class MassDelete extends \Magento\Backend\App\Action
     {
         $collection = $this->filter->getCollection($this->collectionFactory->create());
         $collectionSize = $collection->getSize();
-        $model = $this->_objectManager->create(\Bulbulatory\Recomendations\Model\Recommendation::class);
 
         foreach ($collection as $item) {
             try {
                 $id = $item['recommendation_id'];
-                $model->load($id);
-                $model->delete();
+                $recommendation = $this->_recommendationRepositoryInterface->getById($id);
+                $this->_recommendationRepositoryInterface->delete($recommendation);
             } catch (Exception $e) {
-                $this->messageManager->addError(__('Cannot delete all selected items.'));
+                $id = $item['recommendation_id'];
+                $this->messageManager->addErrorMessage(__('Cannot delete recommendation with id: %1', $id));
             }
         }
 
-        $this->messageManager->addSuccess(__('A total of %1 element(s) have been deleted.', $collectionSize));
+        $this->messageManager->addSuccessMessage(__('A total of %1 element(s) have been deleted.', $collectionSize));
 
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         return $resultRedirect->setPath('*/*/');
