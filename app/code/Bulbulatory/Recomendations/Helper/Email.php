@@ -26,26 +26,27 @@ class Email extends \Magento\Framework\App\Helper\AbstractHelper
         $this->logger = $context->getLogger();
     }
 
-    public function sendEmail()
+    public function sendRecommendationEmail($email, $templateVars)
     { 
         $this->inlineTranslation->suspend();
         $sender = [
-            'name' => $this->escaper->escapeHtml('Admin Bulbulator'),
-            'email' => $this->escaper->escapeHtml('admin@bulbulatory.test'),
+            'name' => $this->escaper->escapeHtml('Bulbulatory.test'),
+            'email' => $this->escaper->escapeHtml('no-reply@bulbulatory.test'),
         ];
         $transport = $this->transportBuilder
-            ->setTemplateIdentifier('email_demo_template')
+            ->setTemplateIdentifier('recommendations_email_email_template')
             ->setTemplateOptions(
                 [
                     'area' => \Magento\Framework\App\Area::AREA_FRONTEND,
                     'store' => \Magento\Store\Model\Store::DEFAULT_STORE_ID,
                 ]
             )
-            ->setTemplateVars([
-                'templateVar'  => 'My Topic',
-            ])
+            ->setTemplateVars(
+                // 'recommendationUrl' => $
+                $templateVars
+            )
             ->setFrom($sender)
-            ->addTo('k44mil155@gmail.com')
+            ->addTo($email)
             ->getTransport();
         $transport->sendMessage();
         $this->inlineTranslation->resume();

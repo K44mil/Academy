@@ -48,6 +48,18 @@ class RecommendationRepository implements RecommendationRepositoryInterface
         return $recommendation;
     }
 
+    public function getByHash($hash)
+    {
+        $recommendation = $this->recommendationFactory->create();
+        $recommendation->getResource()->load($recommendation, $hash, 'hash');
+
+        if (!$recommendation->getId()) {
+            throw new NoSuchEntityException(__('Unable to find recommendation with hash "%1"', $hash));
+        }
+
+        return $recommendation;
+    }
+
     public function save(RecommendationInterface $recommendation)
     {
         $recommendation->getResource()->save($recommendation);

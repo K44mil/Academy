@@ -8,29 +8,39 @@ use Magento\Backend\App\Action\Context;
 use Magento\Framework\Math\Random;
 use Bulbulatory\Recomendations\Api\Data\RecommendationInterface;
 use Bulbulatory\Recomendations\Helper\Email;
+use Magento\Framework\UrlInterface;
+use Magento\Customer\Api\CustomerRepositoryInterface;
 
 class SaveRecommendation extends \Magento\Framework\App\Action\Action
 {
-    protected $_recommendationRepository;
-    protected $_customer;
-    protected $_mathRandom;
-    protected $_recommendation;
-    protected $_email;
+    const CONFIRMATION_URL = 'bulbulatory_recomendations/recommendations/confirmRecommendation';
+
+    protected $recommendationRepository;
+    protected $loggedCustomer;
+    protected $mathRandom;
+    protected $recommendation;
+    protected $email;
+    protected $urlBuilder;
+    protected $customerRepository;
 
     public function __construct(
         Context $context,
         RecommendationRepositoryInterface $recommendationRepository,
-        Session $customer,
+        Session $loggedCustomer,
         Random $mathRandom,
         RecommendationInterface $recommendation,
-        Email $email
+        Email $email,
+        UrlInterface $urlBuilder,
+        CustomerRepositoryInterface $customerRepository
     ) {
         parent::__construct($context);
-        $this->_recommendationRepository = $recommendationRepository;
-        $this->_customer = $customer;
-        $this->_mathRandom = $mathRandom;
-        $this->_recommendation = $recommendation;
-        $this->_email = $email;
+        $this->recommendationRepository = $recommendationRepository;
+        $this->loggedCustomer = $loggedCustomer;
+        $this->mathRandom = $mathRandom;
+        $this->recommendation = $recommendation;
+        $this->email = $email;
+        $this->urlBuilder = $urlBuilder;
+        $this->customerRepository = $customerRepository;
     }
 
 	public function execute()
@@ -38,42 +48,33 @@ class SaveRecommendation extends \Magento\Framework\App\Action\Action
         $post = (array)$this->getRequest()->getPost();
         if (!empty($post)) {
             $email = $post['email'];
-            $hash = $this->_mathRandom->getUniqueHash();
+            $hash = $this->mathRandom->getUniqueHash();
 
             try {
-                $this->_recommendation->setCustomerId($this->_customer->getId());
-                $this->_recommendation->setEmail($email);
-                $this->_recommendation->setHash($hash);
-                $this->_recommendation->setStatus(false);
-                $this->_recommendationRepository->save($this->_recommendation);
+                $this->recommendation->setCustomerId($this->loggedCustomer->getId());
+                $this->recommendation->setEmail($email);
+                $this->recommendation->setHash($hash);
+                $this->recommendation->setStatus(false);
 
-                // $receiverInfo = [
-                //     'name' => 'John Receiver',
-                //     'email' => $email
-                // ];
+                $url = $this->urlBuilder->getUrl(
+                    static::CONFIRMATION_URL,
+                    [
+                        'hash' => $hash
+                    ]
+                );
 
-                // $senderInfo = [
-                //     'name' => 'John Bulbulator',
-                //     'email' => 'test@bulbulatory.test'
-                // ];
+                $customer = $this->customerRepository->getById($this->loggedCustomer->getId());
 
-                // $emailTempVariables = array();
-                // $emailTempVariables['myvar1'] = '1';
-                // $emailTempVariables['myvar2'] = '1';
-                // $emailTempVariables['myvar3'] = '1';
-                // $emailTempVariables['myvar4'] = '1';
-                // $emailTempVariables['myvar5'] = '1';
-                // $emailTempVariables['myvar6'] = '1';
+                $templateVars = [
+                    'recommendationUrl' => $url,
+                    'customerFirstName' => $customer->getFirstname(),
+                    'customerLastName' => $customer->getLastname()
+                ];
 
-                // $this->_email->sendEmail(
-                //     $emailTempVariables,
-                //     $senderInfo,
-                //     $receiverInfo
-                // );
+                $this->email->sendRecommendationEmail($email, $templateVars);            
 
-                $this->_email->sendEmail();
+                $this->recommendationRepository->save($this->recommendation);
                 $this->messageManager->addSuccessMessage(__('Recommendation sent.'));
-
             } catch (Exception $e) {
                 $this->messageManager->addErrorMessage(__('Cannot send recommendation.'));
             }

@@ -14,6 +14,13 @@ interface RecommendationRepositoryInterface
     public function getById($id);
 
     /**
+     * @param string $hash
+     * @return \Bulbulatory\Recomendations\Api\Data\RecommendationInterface
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getByHash($hash);
+
+    /**
      * @param \Bulbulatory\Recomendations\Api\Data\RecommendationInterface $recommendation
      * @return \Bulbulatory\Recomendations\Api\Data\RecommendationInterface
      */

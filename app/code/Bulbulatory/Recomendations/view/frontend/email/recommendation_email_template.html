@@ -1,0 +1,16 @@
+<!--@subject {{trans "Confirm Recommendation on Bulbulatory.test" }} @-->
+<!--@vars {
+
+} @-->
+ 
+{{template config_path="design/email/header_template"}}
+
+<div>
+    {{trans "%first_name %last_name recommends Bulbulatory.test."
+        first_name=$customerFirstName last_name=$customerLastName}}
+</div>
+<div>
+    <a href='{{trans "%href" href=$recommendationUrl }}'>Confirm Recommendation</a>
+</div>
+ 
+{{template config_path="design/email/footer_template"}}
