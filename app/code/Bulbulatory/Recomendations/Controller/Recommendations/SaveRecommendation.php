@@ -5,7 +5,6 @@ use Magento\Framework\Controller\ResultFactory;
 use Bulbulatory\Recomendations\Api\RecommendationRepositoryInterface;
 use Magento\Customer\Model\Session;
 use Magento\Backend\App\Action\Context;
-use Magento\Framework\Math\Random;
 use Bulbulatory\Recomendations\Api\Data\RecommendationInterface;
 use Bulbulatory\Recomendations\Helper\Email;
 use Magento\Framework\UrlInterface;
@@ -17,65 +16,64 @@ class SaveRecommendation extends \Magento\Framework\App\Action\Action
 
     protected $recommendationRepository;
     protected $loggedCustomer;
-    protected $mathRandom;
-    protected $recommendation;
     protected $email;
     protected $urlBuilder;
     protected $customerRepository;
+    protected $logger;
 
     public function __construct(
         Context $context,
         RecommendationRepositoryInterface $recommendationRepository,
         Session $loggedCustomer,
-        Random $mathRandom,
-        RecommendationInterface $recommendation,
         Email $email,
         UrlInterface $urlBuilder,
-        CustomerRepositoryInterface $customerRepository
+        CustomerRepositoryInterface $customerRepository,
+        \Psr\Log\LoggerInterface $logger
     ) {
         parent::__construct($context);
         $this->recommendationRepository = $recommendationRepository;
         $this->loggedCustomer = $loggedCustomer;
-        $this->mathRandom = $mathRandom;
-        $this->recommendation = $recommendation;
         $this->email = $email;
         $this->urlBuilder = $urlBuilder;
         $this->customerRepository = $customerRepository;
+        $this->logger = $logger;
     }
 
 	public function execute()
 	{
         $post = (array)$this->getRequest()->getPost();
-        if (!empty($post)) {
+        if (!empty($post) && $this->loggedCustomer->getId()) {
             $email = $post['email'];
-            $hash = $this->mathRandom->getUniqueHash();
-
+            
             try {
-                $this->recommendation->setCustomerId($this->loggedCustomer->getId());
-                $this->recommendation->setEmail($email);
-                $this->recommendation->setHash($hash);
-                $this->recommendation->setStatus(false);
-
-                $url = $this->urlBuilder->getUrl(
-                    static::CONFIRMATION_URL,
-                    [
-                        'hash' => $hash
-                    ]
-                );
-
                 $customer = $this->customerRepository->getById($this->loggedCustomer->getId());
 
-                $templateVars = [
-                    'recommendationUrl' => $url,
-                    'customerFirstName' => $customer->getFirstname(),
-                    'customerLastName' => $customer->getLastname()
-                ];
+                if ($customer->getEmail() !== $email) {
+                    $recommendation = $this->recommendationRepository
+                    ->createRecommendation($this->loggedCustomer->getId(), $email);
 
-                $this->email->sendRecommendationEmail($email, $templateVars);            
+                    $url = $this->urlBuilder->getUrl(
+                        static::CONFIRMATION_URL,
+                        [
+                            'hash' => $recommendation->getHash()
+                        ]
+                    ); 
 
-                $this->recommendationRepository->save($this->recommendation);
-                $this->messageManager->addSuccessMessage(__('Recommendation sent.'));
+                    $templateVars = [
+                        'recommendationUrl' => $url,
+                        'customerFirstName' => $customer->getFirstname(),
+                        'customerLastName' => $customer->getLastname()
+                    ];
+
+                    $this->email->sendRecommendationEmail($email, $templateVars);            
+                    
+                    $this->messageManager->addSuccessMessage(__('Recommendation sent.'));
+                } else {
+                    $this->messageManager->addErrorMessage(__('You cannot send a recommendation to your own email.'));
+                }
+                
             } catch (Exception $e) {
+                $this->logger->error("Error message: ", ['exception' => $e]);
                 $this->messageManager->addErrorMessage(__('Cannot send recommendation.'));
             }
 
