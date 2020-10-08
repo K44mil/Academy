@@ -11,7 +11,7 @@ class Recommendation extends AbstractExtensibleModel implements RecommendationIn
     const EMAIL = 'email';
     CONST HASH = 'hash';
     CONST STATUS = 'status';
-    CONST CREATION_DATE = 'create_at';
+    CONST CREATION_DATE = 'created_at';
     CONST CONFIRMATION_DATE = 'confirmed_at';
 
     protected function _construct()
@@ -26,7 +26,7 @@ class Recommendation extends AbstractExtensibleModel implements RecommendationIn
 
     public function setId($id)
     {
-        return $this->setData(self::ID, $id);
+        $this->setData(self::ID, $id);
     }
 
     public function getCustomerId()
@@ -36,7 +36,7 @@ class Recommendation extends AbstractExtensibleModel implements RecommendationIn
 
     public function setCustomerId($id)
     {
-        return $this->setData(self::CUSTOMER_ID, $id);
+        $this->setData(self::CUSTOMER_ID, $id);
     }
 
     public function getEmail()
@@ -46,7 +46,7 @@ class Recommendation extends AbstractExtensibleModel implements RecommendationIn
 
     public function setEmail($email)
     {
-        return $this->setData(self::EMAIL, $email);
+        $this->setData(self::EMAIL, $email);
     }
 
     public function getHash()
@@ -56,7 +56,7 @@ class Recommendation extends AbstractExtensibleModel implements RecommendationIn
 
     public function setHash($hash)
     {
-        return $this->setData(self::HASH, $hash);
+        $this->setData(self::HASH, $hash);
     }
 
     public function getStatus()
@@ -66,7 +66,7 @@ class Recommendation extends AbstractExtensibleModel implements RecommendationIn
 
     public function setStatus($status)
     {
-        return $this->setData(self::STATUS, $status);
+        $this->setData(self::STATUS, $status);
     }
 
     public function getCreationDate()
@@ -76,7 +76,7 @@ class Recommendation extends AbstractExtensibleModel implements RecommendationIn
 
     public function setCreationDate($creationDate)
     {
-        return $this->setData(self::CREATION_DATE, $creationDate);
+        $this->setData(self::CREATION_DATE, $creationDate);
     }
 
     public function getConfirmationDate()
@@ -86,6 +86,6 @@ class Recommendation extends AbstractExtensibleModel implements RecommendationIn
 
     public function setConfirmationDate($confirmationDate)
     {
-        return $this->setData(self::CONFIRMATION_DATE, $confirmationDate);
+        $this->setData(self::CONFIRMATION_DATE, $confirmationDate);
     }
 }
