@@ -37,7 +37,7 @@
                         <?= $recommendation->getEmail(); ?>
                     </td>
                     <td data-th="<?= $block->escapeHtml(__('Sent')) ?>" class="col created_at" >
-                        <?= $recommendation->getCreationDate(); ?>
+                        <?= $recommendation->getCreatedAt(); ?>
                     </td>
                     <td data-th="<?= $block->escapeHtml(__('Status')) ?>" class="col status" >
                         <?= $recommendation->getStatus() == '1' ? 'Potwierdzony' : 'Niepotwierdzony'; ?>
