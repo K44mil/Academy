@@ -10,6 +10,7 @@ use Bulbulatory\Recomendations\Model\ResourceModel\Recommendation\Collection;
 use Bulbulatory\Recomendations\Model\RecommendationFactory;
 use Bulbulatory\Recomendations\Api\Data\RecommendationSearchResultInterfaceFactory;
 use Bulbulatory\Recomendations\Api\Data\RecommendationInterface;
+use Magento\Framework\Math\Random;
 
 class RecommendationRepository implements RecommendationRepositoryInterface
 {
@@ -28,14 +29,21 @@ class RecommendationRepository implements RecommendationRepositoryInterface
      */
     private $searchResultFactory;
 
+    /**
+     * @var Magento\Framework\Math\Random
+     */
+    private $mathRandom;
+
     public function __construct(
         RecommendationFactory $recommendationFactory,
         CollectionFactory $recommendationCollectionFactory,
-        RecommendationSearchResultInterfaceFactory $searchResultFactory
+        RecommendationSearchResultInterfaceFactory $searchResultFactory,
+        Random $mathRandom
     ) {
         $this->recommendationFactory = $recommendationFactory;
         $this->recommendationCollectionFactory = $recommendationCollectionFactory;
         $this->searchResultFactory = $searchResultFactory;
+        $this->mathRandom = $mathRandom;
     }
 
     public function getById($id)
@@ -45,6 +53,37 @@ class RecommendationRepository implements RecommendationRepositoryInterface
         if (!$recommendation->getId()) {
             throw new NoSuchEntityException(__('Unable to find recommendation with ID "%1"', $id));
         }
+        return $recommendation;
+    }
+
+    public function getByHash($hash)
+    {
+        $recommendation = $this->recommendationFactory->create();
+        $recommendation->getResource()->load($recommendation, $hash, 'hash');
+
+        if (!$recommendation->getId()) {
+            throw new NoSuchEntityException(__('Unable to find recommendation with hash "%1"', $hash));
+        }
+
+        return $recommendation;
+    }
+
+    public function confirmRecommendation(RecommendationInterface $recommendation)
+    {
+        $recommendation->setStatus(true);
+        $recommendation->setConfirmationDate(date("Y-m-d H:i:s"));
+        $recommendation->getResource()->save($recommendation);
+        return $recommendation;
+    }
+
+    public function createRecommendation($customerId, $email)
+    {
+        $recommendation = $this->recommendationFactory->create();
+        $recommendation->setCustomerId($customerId);
+        $recommendation->setEmail($email);
+        $recommendation->setHash($this->mathRandom->getUniqueHash());
+        
+        $recommendation->getResource()->save($recommendation);
         return $recommendation;
     }
 
