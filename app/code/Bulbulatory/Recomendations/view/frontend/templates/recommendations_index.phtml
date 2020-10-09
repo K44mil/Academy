@@ -2,3 +2,54 @@
     <input name="email" type="email" />
     <input type="submit" value="Wyślij" />
 </form>
+	<br> <br>
+
+<div>
+    <span style="font-weight: 700">Wszystkie rekomendacje: </span> <?= $this->getRecommendationCollection()->getSize(); ?>
+</div>
+<div>
+    <span style="font-weight: 700">Potwierdzone rekomendacje: </span> <?= $this->getConfirmedRecommendations()->getSize(); ?>
+</div>
+<div>
+    <span style="font-weight: 700">Naliczona zniżka: </span> <?= $this->getDiscountValue() ?> %
+</div>
+
+<?php $recommendations = $block->getRecommendationCollection(); ?>
+<?php if ($recommendations && sizeof($recommendations)): ?>
+    <div class="table-wrapper orders-history">
+        <table class="data table table-order-items history" id="my-orders-table">
+            <caption class="table-caption"><?php echo __('Recommendation Table') ?></caption>
+            <thead>
+                <tr>
+                    <th scope="col" class="col recommendation_id"><?php echo __('ID') ?></th>
+                    <th scope="col" class="col email"><?php echo __('Email') ?></th>
+                    <th scope="col" class="col created_at"><?php echo __('Sent') ?></th>
+                    <th scope="col" class="col status"><?php echo __('Status') ?></th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($recommendations as $recommendation): ?>
+                <tr>
+                    <td data-th="<?= $block->escapeHtml(__('ID')) ?>" class="col id" >
+                        <?= $recommendation->getId(); ?>
+                    </td>
+                    <td data-th="<?= $block->escapeHtml(__('Email')) ?>" class="col email" >
+                        <?= $recommendation->getEmail(); ?>
+                    </td>
+                    <td data-th="<?= $block->escapeHtml(__('Sent')) ?>" class="col created_at" >
+                        <?= $recommendation->getCreatedAt(); ?>
+                    </td>
+                    <td data-th="<?= $block->escapeHtml(__('Status')) ?>" class="col status" >
+                        <?= $recommendation->getStatus() == '1' ? 'Potwierdzony' : 'Niepotwierdzony'; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+<?php if ($block->getPagerHtml()): ?>
+        <div class="order-products-toolbar toolbar bottom"><?php echo $block->getPagerHtml(); ?></div>
+    <?php endif ?>
+<?php else: ?>
+    <div class="message info empty"><span><?php echo __('No any record.'); ?></span></div>
+<?php endif ?>
