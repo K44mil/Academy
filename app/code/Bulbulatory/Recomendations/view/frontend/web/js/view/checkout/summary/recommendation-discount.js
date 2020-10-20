@@ -14,7 +14,10 @@ define(
             },
             totals: quote.getTotals(),
             isDisplayedRecommendationDiscountTotal : function () {
-                return true;
+                var recommendationDiscount = totals.getSegment('recommendation_discount');
+                if (recommendationDiscount)
+                    return true;
+                return false;
             },
             getRecommendationDiscountTotal : function () {
                 var price = totals.getSegment('recommendation_discount').value;

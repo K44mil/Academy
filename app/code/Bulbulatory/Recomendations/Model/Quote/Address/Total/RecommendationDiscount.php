@@ -44,11 +44,11 @@ class RecommendationDiscount extends \Magento\Quote\Model\Quote\Address\Total\Ab
     ) {
         parent::collect($quote, $shippingAssignment, $total);
         
-        if ($_config->isModuleEnabled()) {
+        if ($this->_config->isModuleEnabled() && $this->discount > 0) {
             $customDiscount = $total->getSubtotal() * ($this->discount/100);
-            $total->addTotalAmount('recommendation_discount', $customDiscount);
-            $total->addBaseTotalAmount('recommendation_discount', $customDiscount);
-            $quote->setCustomDiscount($customDiscount);
+            $total->addTotalAmount('recommendation_discount', -$customDiscount);
+            $total->addBaseTotalAmount('recommendation_discount', -$customDiscount);
+            $quote->setCustomDiscount(-$customDiscount);
         }
         
         return $this;
@@ -58,11 +58,14 @@ class RecommendationDiscount extends \Magento\Quote\Model\Quote\Address\Total\Ab
         \Magento\Quote\Model\Quote $quote, 
         \Magento\Quote\Model\Quote\Address\Total $total
     ) {
-        return [
-            'code' => 'recommendation_discount',
-            'title' => $this->getLabel(),
-            'value' => $total->getSubtotal() * ($this->discount/100)
-        ];
+        if ($this->_config->isModuleEnabled() && $this->discount > 0) {
+            return [
+                'code' => 'recommendation_discount',
+                'title' => $this->getLabel(),
+                'value' => '-' . $total->getSubtotal() * ($this->discount/100)
+            ];
+        }
+        return [];  
     }
 
     public function getLabel()
